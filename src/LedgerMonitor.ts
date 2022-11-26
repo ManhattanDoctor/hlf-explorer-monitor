@@ -35,18 +35,16 @@ export class LedgerMonitor extends LedgerApiSocket {
         this.api = api;
         this.database = database;
         this.transport = transport;
-        
+
         this.url = this.api.url;
         this.settings.defaultLedgerName = this.api.settings.defaultLedgerName;
 
         this.events
-            .pipe(filter(event => event.type === LedgerSocketEvent.LEDGER_DEFAULT_FOUND))
-            .pipe(takeUntil(this.destroyed))
+            .pipe(filter(event => event.type === LedgerSocketEvent.LEDGER_DEFAULT_FOUND), takeUntil(this.destroyed))
             .subscribe(() => this.infoPromise.resolve(this.ledgerDefault));
 
         this.events
-            .pipe(filter(event => event.type === LedgerSocketEvent.LEDGER_DEFAULT_NOT_FOUND))
-            .pipe(takeUntil(this.destroyed))
+            .pipe(filter(event => event.type === LedgerSocketEvent.LEDGER_DEFAULT_NOT_FOUND), takeUntil(this.destroyed))
             .subscribe(() => this.infoPromise.reject(`Unable to find "${this.ledgerName}" ledger`));
     }
 
