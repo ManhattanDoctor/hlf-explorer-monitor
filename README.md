@@ -1,2 +1,2 @@
 # hlf-explorer-monitor
-Classes for monitoring hlf explorer
+Classes for hlf-explorer monitor
