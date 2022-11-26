@@ -1,0 +1,37 @@
+{
+    "name": "@hlf-explorer/monitor",
+    "version": "3.0.1",
+    "description": "Classes and utils for hlf-explorer monitor",
+    "main": "./cjs/public-api.js",
+    "module": "./esm/public-api.js",
+    "exports": {
+        ".": {
+            "import": "./esm/public-api.js",
+            "require": "./cjs/public-api.js"
+        }
+    },
+    "scripts": {},
+    "author": {
+        "name": "Renat Gubaev",
+        "email": "renat.gubaev@gmail.com"
+    },
+    "license": "ISC",
+    "dependencies": {
+        "@hlf-explorer/common": "^3.0.2",
+        "@ts-core/backend": "^3.0.9"
+    },
+    "devDependencies": {
+        "gulp-npm-module-publisher": "^3.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ManhattanDoctor/hlf-explorer-monitor.git"
+    },
+    "keywords": [
+        "typescript"
+    ],
+    "bugs": {
+        "url": "https://github.com/ManhattanDoctor/hlf-explorer-monitor/issues"
+    },
+    "homepage": "https://github.com/ManhattanDoctor/hlf-explorer-monitor#readme"
+}
