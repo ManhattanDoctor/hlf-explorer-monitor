@@ -8,7 +8,6 @@ import * as _ from 'lodash';
 // --------------------------------------------------------------------------
 
 export enum LedgerMonitorErrorCode {
-    INVALID_LEDGER_ID = 'INVALID_LEDGER_ID',
     INVALID_LAST_BLOCK = 'INVALID_LAST_BLOCK',
     INVALID_PARSING_BLOCK = 'INVALID_PARSING_BLOCK',
 }
@@ -35,10 +34,5 @@ export class LedgerMonitorInvalidLastBlockError extends LedgerMonitorError<numbe
 export class LedgerMonitorInvalidParsingBlockError extends LedgerMonitorError<string> {
     constructor(message: string) {
         super(LedgerMonitorErrorCode.INVALID_PARSING_BLOCK, message, ExtendedError.DEFAULT_ERROR_CODE);
-    }
-}
-export class LedgerMonitorInvalidLedgerIdError extends LedgerMonitorError {
-    constructor() {
-        super(LedgerMonitorErrorCode.INVALID_LEDGER_ID, null, ExtendedError.DEFAULT_ERROR_CODE);
     }
 }

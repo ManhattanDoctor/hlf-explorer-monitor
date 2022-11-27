@@ -37,7 +37,7 @@ export class LedgerMonitor extends LedgerApiSocket {
         this.transport = transport;
 
         this.url = this.api.url;
-        this.settings.defaultLedgerName = this.api.settings.defaultLedgerName;
+        this.settings.ledgerNameDefault = this.api.settings.ledgerNameDefault;
 
         this.events
             .pipe(filter(event => event.type === LedgerSocketEvent.LEDGER_DEFAULT_FOUND), takeUntil(this.destroyed))
@@ -76,7 +76,7 @@ export class LedgerMonitor extends LedgerApiSocket {
     }
 
     protected async checkHandler(): Promise<void> {
-        let ledger = await this.database.infoGet(this.ledgerName);
+        let ledger = await this.database.infoGet();
         let blockLast = await this.blockLastGet();
 
         if (_.isNaN(blockLast) || blockLast === 0) {
@@ -89,7 +89,7 @@ export class LedgerMonitor extends LedgerApiSocket {
         }
 
         this.logger.debug(`Check blocks: ${blockLast - blockHeight} = ${blockLast} - ${blockHeight}`);
-        await this.database.infoUpdate({ id: ledger.id, blockHeight: blockLast });
+        await this.database.infoUpdate({ blockHeight: blockLast });
 
         await this.blocksParse(await this.database.blocksUnparsedGet(blockHeight + 1, blockLast));
     }
@@ -136,7 +136,7 @@ export class LedgerMonitor extends LedgerApiSocket {
         await this.connect();
 
         let info = await this.info;
-        let item = await this.database.infoGet(this.ledgerName);
+        let item = await this.database.infoGet();
         if (_.isNil(item)) {
             item = await this.infoCreate(info, DateUtil.MILLISECONDS_SECOND);
         }
@@ -177,7 +177,7 @@ export class LedgerMonitor extends LedgerApiSocket {
     }
 
     protected get ledgerName(): string {
-        return this.settings.defaultLedgerName;
+        return this.settings.ledgerNameDefault;
     }
 }
 

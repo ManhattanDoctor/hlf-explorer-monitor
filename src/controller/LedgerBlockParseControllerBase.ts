@@ -31,12 +31,12 @@ export abstract class LedgerBlockParseHandlerBase extends TransportCommandHandle
         this.debug(`Parsing block #${params.number}...`);
 
         let block = await this.api.getBlock(params.number);
-        let info = await this.database.infoGet(this.api.settings.defaultLedgerName);
+        let info = await this.database.infoGet();
 
         try {
             await this.database.getConnection().transaction(async manager => {
                 await manager.save(new LedgerBlockEntity(block));
-                await this.database.infoUpdate({ id: info.id, blockHeightParsed: block.number }, manager);
+                await this.database.infoUpdate({ blockHeightParsed: block.number }, manager);
                 await this.parse(manager, block, info);
             });
         } catch (error) {

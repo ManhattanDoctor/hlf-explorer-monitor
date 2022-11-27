@@ -4,7 +4,6 @@ import { ILogger, LoggerWrapper } from '@ts-core/common';
 import { TypeormUtil } from '@ts-core/backend';
 import { ILedgerInfo } from './ILedgerInfo';
 import * as _ from 'lodash';
-import { LedgerMonitorInvalidLedgerIdError } from './LedgerMonitorError';
 
 export class LedgerDatabase extends LoggerWrapper {
     // --------------------------------------------------------------------------
@@ -13,7 +12,7 @@ export class LedgerDatabase extends LoggerWrapper {
     //
     // --------------------------------------------------------------------------
 
-    constructor(logger: ILogger, protected connection: Connection) {
+    constructor(logger: ILogger, protected connection: Connection, protected ledgerName: string) {
         super(logger);
     }
 
@@ -23,17 +22,14 @@ export class LedgerDatabase extends LoggerWrapper {
     //
     // --------------------------------------------------------------------------
 
-    public async infoGet(name: string): Promise<ILedgerInfo> {
-        let item = await this.info.findOneBy({ name });
+    public async infoGet(): Promise<ILedgerInfo> {
+        let item = await this.info.findOneBy({ name: this.ledgerName });
         return !_.isNil(item) ? item.toObject() : null;
     }
 
     public async infoUpdate(item: Partial<ILedgerInfo>, manager?: EntityManager): Promise<UpdateResult> {
-        if (_.isNil(item) || _.isNil(item.id)) {
-            throw new LedgerMonitorInvalidLedgerIdError();
-        }
         let repository = !_.isNil(manager) ? manager.getRepository(LedgerInfoEntity) : this.info;
-        let query = repository.createQueryBuilder().update(item).where('id = :id', { id: item.id });
+        let query = repository.createQueryBuilder().update(item).where('name = :name', { name: this.ledgerName });
 
         if (!_.isNil(item.blockHeightParsed)) {
             query.andWhere('blockHeightParsed < :blockHeightParsed', { blockHeightParsed: item.blockHeightParsed });
