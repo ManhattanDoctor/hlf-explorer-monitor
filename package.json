@@ -17,7 +17,7 @@
     },
     "license": "ISC",
     "dependencies": {
-        "@hlf-explorer/common": "^3.0.4",
+        "@hlf-explorer/common": "^3.0.6",
         "@ts-core/backend": "^3.0.9"
     },
     "devDependencies": {
