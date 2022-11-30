@@ -17,7 +17,7 @@ export class LedgerBlockAdd1627121250010 implements MigrationInterface {
                 "created_date" timestamp default now() not null
             );
 
-            create index "ledger_block_ukey_number" on "ledger_block" (number);
+            create unique index "ledger_block_ukey_number" on "ledger_block" (number);
         `;
         await queryRunner.query(sql);
     }
