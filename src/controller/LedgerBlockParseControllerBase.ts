@@ -35,9 +35,9 @@ export abstract class LedgerBlockParseHandlerBase extends TransportCommandHandle
 
         try {
             await this.database.getConnection().transaction(async manager => {
+                await this.parse(manager, block, info);
                 await manager.save(new LedgerBlockEntity(block));
                 await this.database.infoUpdate({ blockHeightParsed: block.number }, manager);
-                await this.parse(manager, block, info);
             });
         } catch (error) {
             throw new LedgerMonitorInvalidParsingBlockError(`Error parsing "${block.number}" block: ${error.message}`);
