@@ -6,7 +6,6 @@ import { ObjectUtil, ValidateUtil } from '@ts-core/common';
 import * as _ from 'lodash';
 
 @Entity('ledger_block')
-@Index(['number'], { unique: true })
 export class LedgerBlockEntity {
     // --------------------------------------------------------------------------
     //
@@ -24,10 +23,10 @@ export class LedgerBlockEntity {
     @IsNumber()
     public number: number;
 
-    @Column({ name: 'created_date' })
+    @Column()
     @IsDate()
     @Type(() => Date)
-    public createdDate: Date;
+    public date: Date;
 
     // --------------------------------------------------------------------------
     //
@@ -37,7 +36,7 @@ export class LedgerBlockEntity {
 
     constructor(item?: LedgerBlock) {
         if (!_.isNil(item)) {
-            ObjectUtil.copyProperties(item, this, ['number', 'createdDate']);
+            ObjectUtil.copyProperties(item, this, ['number', 'date']);
         }
     }
 

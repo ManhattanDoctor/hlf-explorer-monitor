@@ -14,7 +14,7 @@ export class LedgerBlockAdd1627121250010 implements MigrationInterface {
                 "id" serial not null
                     constraint "ledger_block_id_pkey" primary key,
                 "number" integer not null,
-                "created_date" timestamp default now() not null
+                "date" timestamp not null
             );
 
             create unique index "ledger_block_ukey_number" on "ledger_block" (number);

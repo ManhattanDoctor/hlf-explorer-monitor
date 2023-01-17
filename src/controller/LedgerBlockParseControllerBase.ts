@@ -42,6 +42,5 @@ export abstract class LedgerBlockParseHandlerBase extends TransportCommandHandle
                 throw new LedgerMonitorInvalidParsingBlockError(`Error parsing "${block.number}" block: ${error.message}`);
             }
         });
-
     }
 }
