@@ -78,7 +78,6 @@ export class LedgerMonitor extends LedgerApiSocket {
     protected async checkHandler(): Promise<void> {
         let ledger = await this.database.infoGet();
         let blockLast = await this.blockLastGet();
-
         if (_.isNaN(blockLast) || blockLast === 0) {
             throw new LedgerMonitorInvalidLastBlockError(blockLast);
         }
@@ -104,7 +103,7 @@ export class LedgerMonitor extends LedgerApiSocket {
 
     protected async blockLastGet(): Promise<number> {
         let item = await this.api.getInfo(this.ledgerName);
-        return !_.isNil(item) ? item.blockLast.number : 0;
+        return !_.isNil(item) && !_.isNil(item.blockLast) ? item.blockLast.number : 0;
     }
 
     protected async blocksParse(items: Array<number>): Promise<void> {
