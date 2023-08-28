@@ -36,7 +36,7 @@ export abstract class LedgerBlockParseHandlerBase<T = void> extends TransportCom
         let block = await this.api.getBlock(params.number);
 
         let effects = null;
-        this.database.getConnection().transaction(async manager => {
+        await this.database.getConnection().transaction(async manager => {
             try {
                 effects = await this.parse(manager, block, info);
                 await manager.save(new LedgerBlockEntity(block));
