@@ -1,6 +1,5 @@
 import { DateUtil, ILogger, PromiseHandler, ITransportSender } from '@ts-core/common';
-import { LedgerApiClient, LedgerInfo } from '@hlf-explorer/common';
-import { LedgerApiSocket, LedgerSocketEvent } from '@hlf-explorer/common';
+import { LedgerApiClient, LedgerInfo , LedgerApiSocket, LedgerSocketEvent } from '@hlf-explorer/common';
 import { filter, takeUntil } from 'rxjs';
 import * as _ from 'lodash';
 import { LedgerDatabase } from './LedgerDatabase';

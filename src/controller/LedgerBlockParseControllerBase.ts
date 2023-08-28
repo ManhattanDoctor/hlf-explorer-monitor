@@ -1,5 +1,4 @@
-import { Logger } from '@ts-core/common';
-import { Transport, TransportCommandHandler } from '@ts-core/common';
+import { Logger, Transport, TransportCommandHandler } from '@ts-core/common';
 import { ILedgerBlockParseDto, LedgerBlockParseCommand } from '../transport/LedgerBlockParseCommand';
 import { LedgerDatabase } from '../LedgerDatabase';
 import { LedgerApiClient, LedgerBlock } from '@hlf-explorer/common';
@@ -7,8 +6,9 @@ import { LedgerBlockEntity } from '../database/LedgerBlockEntity';
 import { ILedgerInfo } from '../ILedgerInfo';
 import { EntityManager } from 'typeorm';
 import { LedgerMonitorInvalidParsingBlockError } from '../LedgerMonitorError';
+import * as _ from 'lodash';
 
-export abstract class LedgerBlockParseHandlerBase extends TransportCommandHandler<ILedgerBlockParseDto, LedgerBlockParseCommand> {
+export abstract class LedgerBlockParseHandlerBase<T = void> extends TransportCommandHandler<ILedgerBlockParseDto, LedgerBlockParseCommand> {
     // --------------------------------------------------------------------------
     //
     //  Constructor
@@ -25,22 +25,28 @@ export abstract class LedgerBlockParseHandlerBase extends TransportCommandHandle
     //
     // --------------------------------------------------------------------------
 
-    protected abstract parse(manager: EntityManager, item: LedgerBlock, info: ILedgerInfo): Promise<void>;
+    protected async effects(data: T): Promise<void> { };
+
+    protected abstract parse(manager: EntityManager, item: LedgerBlock, info: ILedgerInfo): Promise<T>;
 
     protected async execute(params: ILedgerBlockParseDto): Promise<void> {
         this.debug(`Parsing block #${params.number}...`);
 
-        let block = await this.api.getBlock(params.number);
         let info = await this.database.infoGet();
+        let block = await this.api.getBlock(params.number);
 
+        let effects = null;
         this.database.getConnection().transaction(async manager => {
             try {
-                await this.parse(manager, block, info);
+                effects = await this.parse(manager, block, info);
                 await manager.save(new LedgerBlockEntity(block));
                 await this.database.infoUpdate({ blockHeightParsed: block.number }, manager);
             } catch (error) {
                 throw new LedgerMonitorInvalidParsingBlockError(`Error parsing "${block.number}" block: ${error.message}`);
             }
         });
+        if (!_.isNil(effects)) {
+            await this.effects(effects);
+        }
     }
 }

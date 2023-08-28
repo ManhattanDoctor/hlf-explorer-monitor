@@ -18,7 +18,7 @@
     "license": "ISC",
     "dependencies": {
         "@hlf-explorer/common": "~3.1.5",
-        "@ts-core/backend": "~3.0.9"
+        "@ts-core/backend": "~3.0.16"
     },
     "devDependencies": {
         "gulp-npm-module-publisher": "^3.0.0"
