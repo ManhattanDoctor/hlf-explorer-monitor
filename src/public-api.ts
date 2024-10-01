@@ -11,3 +11,4 @@ export * from './database/LedgerInfoEntity';
 //
 export * from './transport/LedgerBlockParseCommand';
 export * from './transport/LedgerBlockParsedEvent';
+export * from './transport/LedgerEventParser';
