@@ -87,6 +87,7 @@ export abstract class LedgerBlockParseHandler<T extends ILedgerBlockParserEffect
     }
 }
 
+
 export type LedgerEventParserClass = ClassType<LedgerEventParser<any, any, any>>;
 
 export interface ILedgerBlockParserEffects {
