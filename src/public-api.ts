@@ -3,7 +3,8 @@ export * from './LedgerDatabase';
 export * from './LedgerMonitor';
 export * from './LedgerMonitorError';
 //
-export * from './controller/LedgerBlockParseControllerBase';
+export * from './controller/LedgerBlockParseHandler';
+export * from './controller/LedgerBlockParseHandlerBase';
 //
 export * from './database/LedgerBlockEntity';
 export * from './database/LedgerInfoEntity';

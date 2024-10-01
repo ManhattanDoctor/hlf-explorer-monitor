@@ -1,1 +1,2 @@
-export * from './LedgerBlockParseControllerBase';
+export * from './LedgerBlockParseHandler';
+export * from './LedgerBlockParseHandlerBase';

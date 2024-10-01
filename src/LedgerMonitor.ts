@@ -1,12 +1,12 @@
 import { DateUtil, ILogger, PromiseHandler, ITransportSender } from '@ts-core/common';
 import { LedgerApiClient, LedgerInfo , LedgerApiSocket, LedgerSocketEvent } from '@hlf-explorer/common';
 import { filter, takeUntil } from 'rxjs';
-import * as _ from 'lodash';
 import { LedgerDatabase } from './LedgerDatabase';
 import { ILedgerInfo } from './ILedgerInfo';
 import { LedgerInfoEntity } from './database/LedgerInfoEntity';
 import { LedgerMonitorInvalidLastBlockError } from './LedgerMonitorError';
 import { LedgerBlockParseCommand } from './transport';
+import * as _ from 'lodash';
 
 export class LedgerMonitor extends LedgerApiSocket {
     //--------------------------------------------------------------------------
