@@ -1,9 +1,9 @@
 import { DateUtil, ILogger, PromiseHandler, ITransportSender } from '@ts-core/common';
-import { LedgerApiClient, LedgerInfo , LedgerApiSocket, LedgerSocketEvent } from '@hlf-explorer/common';
+import { LedgerApiClient, LedgerInfo, LedgerApiSocket, LedgerSocketEvent } from '@hlf-explorer/common';
 import { filter, takeUntil } from 'rxjs';
 import { LedgerDatabase } from './LedgerDatabase';
 import { ILedgerInfo } from './ILedgerInfo';
-import { LedgerInfoEntity } from './database/LedgerInfoEntity';
+import { LedgerInfoEntity } from './database';
 import { LedgerMonitorInvalidLastBlockError } from './LedgerMonitorError';
 import { LedgerBlockParseCommand } from './transport';
 import * as _ from 'lodash';
@@ -101,8 +101,8 @@ export class LedgerMonitor extends LedgerApiSocket {
     // --------------------------------------------------------------------------
 
     protected async blockLastGet(): Promise<number> {
-        let item = await this.api.getInfo(this.ledgerName);
-        return !_.isNil(item) && !_.isNil(item.blockLast) ? item.blockLast.number : 0;
+        let item = await this.api.getLedger(this.ledgerName);
+        return !_.isNil(item) && !_.isNil(item.blockHeightParsed) ? item.blockHeightParsed : 0;
     }
 
     protected async blocksParse(items: Array<number>): Promise<void> {
