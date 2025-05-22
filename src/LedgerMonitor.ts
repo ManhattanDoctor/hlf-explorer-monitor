@@ -4,7 +4,7 @@ import { filter, takeUntil } from 'rxjs';
 import { LedgerDatabase } from './LedgerDatabase';
 import { ILedgerInfo } from './ILedgerInfo';
 import { LedgerInfoEntity } from './database';
-import { LedgerMonitorInvalidLastBlockError } from './LedgerMonitorError';
+import { LedgerMonitorInvalidLastBlockError, LedgerMonitorInvalidLedgerError } from './LedgerMonitorError';
 import { LedgerBlockParseCommand } from './transport';
 import * as _ from 'lodash';
 
@@ -75,24 +75,31 @@ export class LedgerMonitor extends LedgerApiSocket {
     }
 
     protected async checkHandler(): Promise<void> {
+        let block = await this.blockLastGet();
         let ledger = await this.database.infoGet();
-        let blockLast = await this.blockLastGet();
-        if (_.isNaN(blockLast) || blockLast === 0) {
-            throw new LedgerMonitorInvalidLastBlockError(blockLast);
+        if (_.isNaN(block) || block === 0) {
+            throw new LedgerMonitorInvalidLastBlockError(block);
         }
 
         let blockHeight = ledger.blockHeight;
-        if (blockHeight >= blockLast) {
+        if (blockHeight >= block) {
             return;
         }
 
-        this.logger.debug(`Check blocks: ${blockLast - blockHeight} = ${blockLast} - ${blockHeight}`);
-        await this.database.infoUpdate({ blockHeight: blockLast });
+        this.logger.debug(`Check blocks: ${block - blockHeight} = ${block} - ${blockHeight}`);
+        await this.database.infoUpdate({ blockHeight: block });
 
-        await this.blocksParse(await this.database.blocksUnparsedGet(blockHeight + 1, blockLast));
+        await this.blocksParse(await this.database.blocksUnparsedGet(blockHeight + 1, block));
     }
 
-    protected checkHandlerProxy = (): Promise<void> => this.checkHandler();
+    protected checkHandlerProxy = async (): Promise<void> => {
+        try {
+            await this.checkHandler();
+        }
+        catch (error) {
+            this.logger.warn(`Unable to check explorer: ${error.message}`);
+        }
+    }
 
     // --------------------------------------------------------------------------
     //
@@ -101,7 +108,13 @@ export class LedgerMonitor extends LedgerApiSocket {
     // --------------------------------------------------------------------------
 
     protected async blockLastGet(): Promise<number> {
-        let item = await this.api.getLedger(this.ledgerName);
+        let item = null;
+        try {
+            item = await this.api.getLedger(this.ledgerName);
+        }
+        catch (error) {
+            throw new LedgerMonitorInvalidLedgerError(error.message);
+        }
         return !_.isNil(item) && !_.isNil(item.blockHeightParsed) ? item.blockHeightParsed : 0;
     }
 
