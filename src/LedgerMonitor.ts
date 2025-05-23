@@ -4,7 +4,7 @@ import { filter, takeUntil } from 'rxjs';
 import { LedgerDatabase } from './LedgerDatabase';
 import { ILedgerInfo } from './ILedgerInfo';
 import { LedgerInfoEntity } from './database';
-import { LedgerMonitorInvalidLastBlockError, LedgerMonitorInvalidLedgerError } from './LedgerMonitorError';
+import { LedgerMonitorBlockLastError } from './LedgerMonitorError';
 import { LedgerBlockParseCommand } from './transport';
 import * as _ from 'lodash';
 
@@ -76,11 +76,11 @@ export class LedgerMonitor extends LedgerApiSocket {
 
     protected async checkHandler(): Promise<void> {
         let block = await this.blockLastGet();
-        let ledger = await this.database.infoGet();
         if (_.isNaN(block) || block === 0) {
-            throw new LedgerMonitorInvalidLastBlockError(block);
+            throw new LedgerMonitorBlockLastError(block);
         }
 
+        let ledger = await this.database.infoGet();
         let blockHeight = ledger.blockHeight;
         if (blockHeight >= block) {
             return;
@@ -108,14 +108,13 @@ export class LedgerMonitor extends LedgerApiSocket {
     // --------------------------------------------------------------------------
 
     protected async blockLastGet(): Promise<number> {
-        let item = null;
         try {
-            item = await this.api.getLedger(this.ledgerName);
+            let { number } = await this.api.getBlockLast(this.ledgerName);
+            return number;
         }
         catch (error) {
-            throw new LedgerMonitorInvalidLedgerError(error.message);
+            throw new LedgerMonitorBlockLastError(error.message);
         }
-        return !_.isNil(item) && !_.isNil(item.blockHeightParsed) ? item.blockHeightParsed : 0;
     }
 
     protected async blocksParse(items: Array<number>): Promise<void> {

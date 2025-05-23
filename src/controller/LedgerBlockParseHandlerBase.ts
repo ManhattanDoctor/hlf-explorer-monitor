@@ -5,7 +5,7 @@ import { LedgerApiClient, LedgerBlock } from '@hlf-explorer/common';
 import { LedgerBlockEntity } from '../database/LedgerBlockEntity';
 import { ILedgerInfo } from '../ILedgerInfo';
 import { EntityManager } from 'typeorm';
-import { LedgerMonitorInvalidParsingBlockError } from '../LedgerMonitorError';
+import { LedgerMonitorBlockParseError } from '../LedgerMonitorError';
 import * as _ from 'lodash';
 
 export abstract class LedgerBlockParseHandlerBase<T = void> extends TransportCommandHandler<ILedgerBlockParseDto, LedgerBlockParseCommand> {
@@ -43,7 +43,7 @@ export abstract class LedgerBlockParseHandlerBase<T = void> extends TransportCom
                 await manager.save(new LedgerBlockEntity(block));
                 await this.database.infoUpdate({ blockHeightParsed: block.number }, manager);
             } catch (error) {
-                throw new LedgerMonitorInvalidParsingBlockError(`Error parsing "${block.number}" block: ${error.message}`);
+                throw new LedgerMonitorBlockParseError(`Error parse "${block.number}" block: ${error.message}`);
             }
         });
         if (!_.isNil(effects)) {

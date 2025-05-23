@@ -8,9 +8,8 @@ import * as _ from 'lodash';
 // --------------------------------------------------------------------------
 
 export enum LedgerMonitorErrorCode {
-    INVALID_LEDGER = 'INVALID_LEDGER',
-    INVALID_LAST_BLOCK = 'INVALID_LAST_BLOCK',
-    INVALID_PARSING_BLOCK = 'INVALID_PARSING_BLOCK',
+    BLOCK_LAST = 'BLOCK_LAST',
+    BLOCK_PARSE = 'BLOCK_PARSE',
 }
 
 export class LedgerMonitorError<T = void> extends ExtendedError<T, LedgerMonitorErrorCode> {
@@ -27,18 +26,13 @@ export class LedgerMonitorError<T = void> extends ExtendedError<T, LedgerMonitor
 //
 // --------------------------------------------------------------------------
 
-export class LedgerMonitorInvalidLedgerError extends LedgerMonitorError<string> {
-    constructor(message: string) {
-        super(LedgerMonitorErrorCode.INVALID_LEDGER, message, ExtendedError.DEFAULT_ERROR_CODE);
-    }
-}
-export class LedgerMonitorInvalidLastBlockError extends LedgerMonitorError<number> {
+export class LedgerMonitorBlockLastError extends LedgerMonitorError<number> {
     constructor(number: number) {
-        super(LedgerMonitorErrorCode.INVALID_LAST_BLOCK, number, ExtendedError.DEFAULT_ERROR_CODE);
+        super(LedgerMonitorErrorCode.BLOCK_LAST, number, ExtendedError.DEFAULT_ERROR_CODE);
     }
 }
-export class LedgerMonitorInvalidParsingBlockError extends LedgerMonitorError<string> {
+export class LedgerMonitorBlockParseError extends LedgerMonitorError<string> {
     constructor(message: string) {
-        super(LedgerMonitorErrorCode.INVALID_PARSING_BLOCK, message, ExtendedError.DEFAULT_ERROR_CODE);
+        super(LedgerMonitorErrorCode.BLOCK_PARSE, message, ExtendedError.DEFAULT_ERROR_CODE);
     }
 }
