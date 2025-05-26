@@ -1,5 +1,5 @@
 import { DateUtil, ILogger, PromiseHandler, ITransportSender } from '@ts-core/common';
-import { LedgerApiClient, LedgerInfo, LedgerApiSocket, LedgerSocketEvent } from '@hlf-explorer/common';
+import { LedgerApiClient, LedgerInfo, LedgerApiSocket, LedgerSocketEvent, LedgerBlock } from '@hlf-explorer/common';
 import { filter, takeUntil } from 'rxjs';
 import { LedgerDatabase } from './LedgerDatabase';
 import { ILedgerInfo } from './ILedgerInfo';
@@ -138,7 +138,7 @@ export class LedgerMonitor extends LedgerApiSocket {
     //
     // --------------------------------------------------------------------------
 
-    public async start(): Promise<void> {
+    public async start(): Promise<LedgerBlock> {
         if (_.isNil(this.infoPromise)) {
             this.infoPromise = PromiseHandler.create();
         }
@@ -153,6 +153,7 @@ export class LedgerMonitor extends LedgerApiSocket {
 
         await this.checkUnparsedBlocks();
         this.checkStart(item.blockFrequency);
+        return this.api.getBlockLast(item.name);
     }
 
     public stop(): void {
