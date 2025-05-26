@@ -94,7 +94,7 @@ export class LedgerMonitor extends LedgerApiSocket {
             await this.checkHandler();
         }
         catch (error) {
-            this.logger.warn(`Unable to check explorer: ${error.message}`);
+            this.logger.warn(`Connection to explorer failed: ${error.message}`);
         }
     }
 
@@ -107,6 +107,9 @@ export class LedgerMonitor extends LedgerApiSocket {
     protected async blockLastGet(): Promise<number> {
         try {
             let { number } = await this.api.getBlockLast(this.ledgerName);
+            if (this.isLastBlockError) {
+                this.logger.warn(`Connection to explorer restored`);
+            }
             this.isLastBlockError = false;
             return number;
         }
