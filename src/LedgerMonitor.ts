@@ -79,7 +79,7 @@ export class LedgerMonitor extends LedgerApiSocket {
         let block = await this.blockLastGet();
         let ledger = await this.database.infoGet();
         let blockHeight = ledger.blockHeight;
-        if (blockHeight >= block) {
+        if (_.isNil(block) || _.isNaN(block) || blockHeight >= block) {
             return;
         }
 
@@ -114,9 +114,6 @@ export class LedgerMonitor extends LedgerApiSocket {
             return number;
         }
         catch (error) {
-            if (this.isLastBlockError) {
-                return;
-            }
             this.isLastBlockError = true;
             throw new LedgerMonitorBlockLastError(error.message);
         }
