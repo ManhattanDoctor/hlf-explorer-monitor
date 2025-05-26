@@ -26,9 +26,9 @@ export class LedgerMonitorError<T = void> extends ExtendedError<T, LedgerMonitor
 //
 // --------------------------------------------------------------------------
 
-export class LedgerMonitorBlockLastError extends LedgerMonitorError<number> {
-    constructor(number: number) {
-        super(LedgerMonitorErrorCode.BLOCK_LAST, number, ExtendedError.DEFAULT_ERROR_CODE);
+export class LedgerMonitorBlockLastError extends LedgerMonitorError<string> {
+    constructor(message: string) {
+        super(LedgerMonitorErrorCode.BLOCK_LAST, message, ExtendedError.DEFAULT_ERROR_CODE);
     }
 }
 export class LedgerMonitorBlockParseError extends LedgerMonitorError<string> {
