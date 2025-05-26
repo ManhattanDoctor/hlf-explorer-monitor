@@ -109,8 +109,8 @@ export class LedgerMonitor extends LedgerApiSocket {
             let { number } = await this.api.getBlockLast(this.ledgerName);
             if (this.isLastBlockError) {
                 this.logger.warn(`Connection to explorer restored`);
+                this.isLastBlockError = false;
             }
-            this.isLastBlockError = false;
             return number;
         }
         catch (error) {
