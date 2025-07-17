@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 export enum LedgerMonitorErrorCode {
     BLOCK_LAST = 'BLOCK_LAST',
     BLOCK_PARSE = 'BLOCK_PARSE',
+    LEDGER_NOT_FOUND = 'LEDGER_NOT_FOUND',
 }
 
 export class LedgerMonitorError<T = void> extends ExtendedError<T, LedgerMonitorErrorCode> {
@@ -34,5 +35,10 @@ export class LedgerMonitorBlockLastError extends LedgerMonitorError<string> {
 export class LedgerMonitorBlockParseError extends LedgerMonitorError<string> {
     constructor(message: string) {
         super(LedgerMonitorErrorCode.BLOCK_PARSE, message, ExtendedError.DEFAULT_ERROR_CODE);
+    }
+}
+export class LedgerMonitorLedgerNotFoundError extends LedgerMonitorError<string> {
+    constructor(message: string) {
+        super(LedgerMonitorErrorCode.LEDGER_NOT_FOUND, message, ExtendedError.DEFAULT_ERROR_CODE);
     }
 }

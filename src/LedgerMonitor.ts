@@ -4,7 +4,7 @@ import { filter, takeUntil } from 'rxjs';
 import { LedgerDatabase } from './LedgerDatabase';
 import { ILedgerInfo } from './ILedgerInfo';
 import { LedgerInfoEntity } from './database';
-import { LedgerMonitorBlockLastError } from './LedgerMonitorError';
+import { LedgerMonitorBlockLastError, LedgerMonitorLedgerNotFoundError } from './LedgerMonitorError';
 import { LedgerBlockParseCommand } from './transport';
 import * as _ from 'lodash';
 
@@ -78,6 +78,9 @@ export class LedgerMonitor extends LedgerApiSocket {
     protected async checkHandler(): Promise<void> {
         let block = await this.blockLastGet();
         let ledger = await this.database.infoGet();
+        if (_.isNil(ledger)) {
+            throw new LedgerMonitorLedgerNotFoundError(this.ledgerName);
+        }
         let blockHeight = ledger.blockHeight;
         if (_.isNil(block) || _.isNaN(block) || blockHeight >= block) {
             return;
