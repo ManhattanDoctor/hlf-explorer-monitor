@@ -15,10 +15,11 @@ export class LedgerMonitor extends LedgerApiSocket {
     //
     //--------------------------------------------------------------------------
 
+    public isExitOnError: boolean
+
     protected api: LedgerApiClient;
     protected database: LedgerDatabase;
     protected transport: ITransportSender;
-    protected isLastBlockError: boolean;
 
     protected checkTimer: any;
     protected infoPromise: PromiseHandler<LedgerInfo, string>;
@@ -97,7 +98,11 @@ export class LedgerMonitor extends LedgerApiSocket {
             await this.checkHandler();
         }
         catch (error) {
-            this.logger.warn(`Connection to explorer failed: ${error.message}`);
+            this.logger.error(`Block checking failed: ${error.message}`);
+            if (this.isExitOnError) {
+                this.logger.error(`Process will be terminated`);
+                process.exit(1);
+            }
         }
     }
 
@@ -110,14 +115,9 @@ export class LedgerMonitor extends LedgerApiSocket {
     protected async blockLastGet(): Promise<number> {
         try {
             let { number } = await this.api.getBlockLast(this.ledgerName);
-            if (this.isLastBlockError) {
-                this.logger.warn(`Connection to explorer restored`);
-                this.isLastBlockError = false;
-            }
             return number;
         }
         catch (error) {
-            this.isLastBlockError = true;
             throw new LedgerMonitorBlockLastError(error.message);
         }
     }
@@ -147,7 +147,6 @@ export class LedgerMonitor extends LedgerApiSocket {
         if (_.isNil(this.infoPromise)) {
             this.infoPromise = PromiseHandler.create();
         }
-
         await this.connect();
 
         let info = await this.info;
