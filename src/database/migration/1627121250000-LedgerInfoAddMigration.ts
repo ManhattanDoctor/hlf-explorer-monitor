@@ -20,7 +20,7 @@ export class LedgerInfoAdd1627121250000 implements MigrationInterface {
                 "block_height_parsed" integer not null
             );
 
-            create index "ledger_info_ukey_name" on "ledger_info" (name);
+            create index if not exists "ledger_info_ukey_name" on "ledger_info" (name);
         `;
         await queryRunner.query(sql);
     }
